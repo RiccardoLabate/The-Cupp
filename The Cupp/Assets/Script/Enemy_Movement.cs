@@ -17,6 +17,7 @@ public class Enemy_Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         Vector3 destination = WayPoints[index].transform.position;
         Vector3 newPos = Vector3.MoveTowards(transform.position, destination, speed * Time.deltaTime);
         transform.position = newPos;

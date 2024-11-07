@@ -1,61 +1,58 @@
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
+using System.Collections;
+using System.Collections.Generic;
 
 public class NemicoController : MonoBehaviour
 {
-    public GameObject proiettilePrefab;
-    public Transform puntoDiSparo;
-    public float forzaSparo = 20f;
-    public float frequenzaDiSparo = 1f;
-    public Transform giocatore;
+    public GameObject enemy;
+    public Transform player;
 
-    private float timer = 0f;
+    public GameObject target;
 
+    [SerializeField] private float timer = 5;
+    private float bulletTime;
+
+    public GameObject enemyBullet;
+    public Transform spawnPoint;
+    public float enemySpeed;
+
+    public float turnRate;
     void Update()
     {
-        timer += Time.deltaTime;
+        Vector3 directionToTarget = target.transform.position - transform.position;
+        directionToTarget.y = 0; // Project the direction onto the XZ plane
 
-        if (timer >= frequenzaDiSparo)
-        {
-            timer = 0f;
-            Spara();
-        }
-        //giocatore = GameObject.Find("Player").transform;
+        // Calculate the angle between the forward vector and the target direction
+        float angleToTarget = Vector3.SignedAngle(transform.forward, directionToTarget, Vector3.up);
+
+        // Create a rotation around the Y-axis
+        Quaternion rotation = Quaternion.AngleAxis(angleToTarget * Time.deltaTime * turnRate, Vector3.up);
+
+        // Apply the rotation
+        transform.rotation = rotation * transform.rotation;
+
+
+        /*Vector3 targetDelta = target.transform.position - transform.position;
+        float angleToTarget = Vector3.Angle(transform.forward, targetDelta);
+        Vector3 turnAxis = Vector3.Cross(transform.forward, targetDelta);
+
+        transform.RotateAround(transform.position, turnAxis, Time.deltaTime * turnRate * angleToTarget);*/
+        Spara();
     }
 
     void Spara()
     {
-        GameObject proiettile = Instantiate(proiettilePrefab, puntoDiSparo.position, puntoDiSparo.rotation);
-        Rigidbody rb = proiettile.GetComponent<Rigidbody>();
+        bulletTime -= Time.deltaTime;
 
-        Vector3 direzione = (giocatore.position - transform.position).normalized;
-        rb.velocity = direzione * forzaSparo;
+        if (bulletTime > 0) return;
 
-    }
-}/*using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.InputSystem;
+        bulletTime = timer;
 
-public class Spawni : MonoBehaviour
-{
+        GameObject bulletobj = Instantiate(enemyBullet, spawnPoint.transform.position, spawnPoint.transform.rotation) as GameObject;
+        Rigidbody bulletRig = bulletobj.GetComponent<Rigidbody>();
+        bulletRig.AddForce(bulletRig.transform.forward * enemySpeed);
 
-    [SerializeField]
-    public GameObject proiettilePrefab;
-    [SerializeField]
-    public Transform firePoint;
-    
-    private InputActionReference shootAction;
-
-    // Update is called once per frame
-    void Update()
-    {
-        if(shootAction.action.WasPressedThisFrame()){
-            FireProiettile();
-        }
-    }
-
-    void FireProiettile(){
-        GameObject newProiettile = Instantiate(proiettilePrefab, firePoint.position, firePoint.rotation);
     }
 }
-*/
