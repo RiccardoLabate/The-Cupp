@@ -8,6 +8,10 @@ public class Enemy_Movement : MonoBehaviour
     public float speed = 3;
     int index = 0;
 
+    public Transform player; // Riferimento al giocatore
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -35,6 +39,9 @@ public class Enemy_Movement : MonoBehaviour
             }
 
         }
+
+        transform.LookAt(player.position);
+        
 
 
     }
