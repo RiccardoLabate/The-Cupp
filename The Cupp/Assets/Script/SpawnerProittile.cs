@@ -19,6 +19,8 @@ public class NemicoController : MonoBehaviour
     public float enemySpeed;
 
     public float turnRate;
+
+    Vector3 directionToTarget;
     void Update()
     {
         Vector3 directionToTarget = target.transform.position - transform.position;
